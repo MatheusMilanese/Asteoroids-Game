@@ -4,14 +4,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
     
-    [SerializeField] private Bullet bulletPrefab;
     private Rigidbody2D _rigidbody;
 
+    [SerializeField] private Bullet bulletPrefab;
+    [SerializeField] private float _thrustSpeed;
+    [SerializeField] private float _turnSpeed;
+
+    private bool _isDead = false;
     private bool _thrusting;
     private float _turnDirection;
 
-    [SerializeField] private float _thrustSpeed;
-    [SerializeField] private float _turnSpeed;
+    public bool isDead {
+        get { return _isDead; }
+        set { _isDead = value; }
+    }
 
     private void Awake() {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -29,11 +35,20 @@ public class Player : MonoBehaviour {
         OnMove();
     }
 
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if(collision.gameObject.tag != "Asteroid") return;
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.angularVelocity = 0.0f;
+        _isDead = true;
+        gameObject.SetActive(false);
+    }
+
     void toShoot(){
         Bullet newBullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
         newBullet.Project(transform.up);
     }
 
+    #region Movement
     void OnInput(){
         _thrusting = (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow));
         
@@ -57,4 +72,5 @@ public class Player : MonoBehaviour {
             _rigidbody.AddTorque(_turnDirection * _turnSpeed);
         } 
     }
+    #endregion
 }
