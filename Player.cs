@@ -37,6 +37,7 @@ public class Player : MonoBehaviour {
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if(collision.gameObject.tag != "Asteroid") return;
+        FindObjectOfType<GameManager>().ObjectDestroyed(transform);
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.angularVelocity = 0.0f;
         _isDead = true;

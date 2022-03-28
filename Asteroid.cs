@@ -5,6 +5,7 @@ public class Asteroid : MonoBehaviour {
     private SpriteRenderer _spriteRenderer;
     private Rigidbody2D _rigidbody;
 
+    [SerializeField] private GameManager _gameManager;
     [SerializeField] private Sprite[] _asteroidSprites;
 
     [Header("Propriedades")]
@@ -31,6 +32,8 @@ public class Asteroid : MonoBehaviour {
     }
 
     private void Start() {
+        _gameManager = FindObjectOfType<GameManager>();
+
         _spriteRenderer.sprite = _asteroidSprites[Random.Range(0, _asteroidSprites.Length)];
         transform.eulerAngles = new Vector3(0.0f, 0.0f, Random.value * 360.0f);
         transform.localScale = Vector3.one * _size;
@@ -48,6 +51,8 @@ public class Asteroid : MonoBehaviour {
             Split();
             Split();
         }
+        _gameManager.ObjectDestroyed(transform);
+        _gameManager.score += Mathf.RoundToInt(_size*10);
         Destroy(gameObject);
     }
 
